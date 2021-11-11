@@ -39,9 +39,15 @@ impl fmt::Display for Diagnostic {
 // therein.
 pub fn set_context_for_diagnostics(kb: &KnowledgeBase, diagnostics: &mut Vec<Diagnostic>) {
     for diagnostic in diagnostics {
-        if let Diagnostic::Error(e) = diagnostic {
-            let source = e.get_source_id().and_then(|id| kb.sources.get_source(id));
-            e.set_context(source.as_ref(), None);
+        match diagnostic {
+            Diagnostic::Error(e) => {
+                let source = e.get_source_id().and_then(|id| kb.sources.get_source(id));
+                e.set_context(source.as_ref(), None);
+            }
+            Diagnostic::Warning(w) => {
+                let source = w.get_source_id().and_then(|id| kb.sources.get_source(id));
+                w.set_context(source.as_ref());
+            }
         }
     }
 }
